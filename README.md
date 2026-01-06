@@ -2,11 +2,11 @@
 
 ![Rust](https://img.shields.io/badge/rust-1.75%2B-orange?logo=rust)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Platform](https://img.shields.io/badge/platform-linux%20%7C%20armv6-lightgrey)
+![Platform](https://img.shields.io/badge/platform-linux%20%7C%20arm%20%7C%20x86__64-lightgrey)
 
 A lightweight, asynchronous bot designed to mirror posts from one Mastodon account to another. 
 
-Built with **Rust**, it is optimized for low-resource hardware like the **Raspberry Pi Zero W**. It handles media attachments, preserves content formatting, and manages API rate limits intelligently.
+Built with **Rust**, it is highly efficient and portable. While it is optimized to run on low-resource hardware like the **Raspberry Pi Zero W**, it works perfectly on **standard Linux servers, VPS, and desktops (x86_64)**.
 
 ## ✨ Features
 
@@ -16,7 +16,7 @@ Built with **Rust**, it is optimized for low-resource hardware like the **Raspbe
   - Ignores Replies and Reblogs (mirrors original content only).
   - Skips conversations (posts starting with `@user`).
 - **State Persistence:** Remembers the ID of the last mirrored post to prevent duplicates after restarts.
-- **Zero-Dependency TLS:** Uses `rustls` instead of OpenSSL, making cross-compilation for ARM/Linux painless.
+- **Zero-Dependency TLS:** Uses `rustls` instead of OpenSSL, ensuring easy compilation on any Linux distro without dependency hell.
 - **Systemd Ready:** Includes service configuration for automatic background execution.
 
 ## 🛠️ Configuration
@@ -28,23 +28,37 @@ Built with **Rust**, it is optimized for low-resource hardware like the **Raspbe
 
 2. **Create a `.env` file** in the project root:
 
-    ### Source Account (Where to take posts from)
+    # Source Account (Where to take posts from)
     SOURCE_URL=https://mastodon.social
     SOURCE_TOKEN=your_source_access_token
 
-    ### Target Account (Where to publish)
-    TARGET_URL=https://mastodon.social
+    # Target Account (Where to publish)
+    TARGET_URL=https://mas.to
     TARGET_TOKEN=your_target_access_token
 
 ## 🏗️ Build & Install
 
-### Local Development (x86_64)
-To run the bot on your local machine:
+You can build this project for any Linux machine. Choose the option that fits your hardware.
 
-    cargo run --release
+### Option 1: Standard Build (PC, Server, VPS)
+For standard 64-bit Linux systems (Ubuntu, Debian, Fedora, Arch, etc.).
 
-### Cross-Compilation for Raspberry Pi Zero W (ARMv6)
-This project uses `rustls` to avoid OpenSSL linking issues on older hardware. We recommend using `cargo-zigbuild`.
+1. **Install Rust:**
+   If you haven't already: https://rustup.rs/
+
+2. **Build:**
+
+    cargo build --release
+
+3. **Run:**
+   The binary will be created in `target/release/`.
+
+    ./target/release/mirror
+
+---
+
+### Option 2: Cross-Compilation for Raspberry Pi Zero W (ARMv6)
+If you are building on a powerful PC for an older Raspberry Pi (Model Zero/1). We recommend using `cargo-zigbuild`.
 
 1. **Install dependencies:**
 
@@ -57,13 +71,10 @@ This project uses `rustls` to avoid OpenSSL linking issues on older hardware. We
     cargo zigbuild --release --target arm-unknown-linux-gnueabihf.2.28
 
 3. **Deploy:**
-   The binary will be located at:
-   `target/arm-unknown-linux-gnueabihf/release/mirror`
+   Copy the binary to your Pi:
 
-   Copy it to your Raspberry Pi:
-
-    scp -P 22 target/arm-unknown-linux-gnueabihf/release/mirror pi@raspberrypi.local:/home/pi/
-    scp -P 22 .env pi@raspberrypi.local:/home/pi/
+    scp target/arm-unknown-linux-gnueabihf/release/mirror pi@raspberrypi.local:/home/pi/
+    scp .env pi@raspberrypi.local:/home/pi/
 
 ## 🚀 Deployment (Systemd)
 
@@ -82,9 +93,9 @@ To run the bot as a background service on Linux:
     Wants=network-online.target
 
     [Service]
-    User=pi
-    WorkingDirectory=/home/pi/mirror
-    ExecStart=/home/pi/mirror/mirror
+    User=your_user
+    WorkingDirectory=/path/to/your/mirror/folder
+    ExecStart=/path/to/your/mirror/folder/mirror
     Restart=always
     RestartSec=15
     StandardOutput=journal
