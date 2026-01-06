@@ -33,7 +33,7 @@ Built with **Rust**, it is optimized for low-resource hardware like the **Raspbe
     SOURCE_TOKEN=your_source_access_token
 
     # Target Account (Where to publish)
-    TARGET_URL=https://mas.to
+    TARGET_URL=https://mastodon.social
     TARGET_TOKEN=your_target_access_token
 
 ## 🏗️ Build & Install
