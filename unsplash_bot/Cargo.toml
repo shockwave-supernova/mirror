@@ -5,6 +5,17 @@ edition = "2021"
 
 [dependencies]
 reqwest = { version = "0.11", features = ["blocking", "json", "multipart"] }
+# Use rustls instead of native-tls (OpenSSL) to simplify cross-compilation.
+#
+# PROBLEM: Standard OpenSSL (native-tls) requires system libraries and headers 
+# for the target architecture (e.g., ARMv6 for Raspberry Pi Zero), which are 
+# often missing or difficult to configure in cross-compilation environments.
+#
+# SOLUTION: By disabling default features and enabling 'rustls-tls', we use a 
+# pure Rust implementation of TLS. This removes the dependency on system 
+# OpenSSL libraries, making the binary portable and much easier to build for 
+# Raspberry Pi or other architectures.
+# reqwest = { version = "0.11", default-features = false, features = ["blocking", "json", "multipart", "rustls-tls"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 dotenv = "0.15"
